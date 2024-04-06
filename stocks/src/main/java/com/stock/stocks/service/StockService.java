@@ -10,6 +10,6 @@ public interface StockService {
     StockDto findStockByName(String name);
     StockDto findStockBySymbol(String symbol);
     List<StockDto> findAll();
-    int sellStock(SellRequest request);
+    double sellStock(SellRequest request);
 
 }

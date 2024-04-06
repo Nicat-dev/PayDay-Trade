@@ -18,6 +18,6 @@ public class Stock {
     String mic_code;
     String country;
     String type;
-    int price;
+    double price;
 
 }
