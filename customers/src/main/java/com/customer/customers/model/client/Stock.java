@@ -1,22 +1,15 @@
-package com.stock.stocks.model.entity;
+package com.customer.customers.model.client;
 
-import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
-@Entity
-@Table(name = "stock")
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Stock {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    @Column(unique = true)
     String symbol;
     String name;
     String currency;
@@ -25,5 +18,4 @@ public class Stock {
     String country;
     String type;
     double price;
-
 }

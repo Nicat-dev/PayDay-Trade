@@ -1,11 +1,14 @@
 package com.customer.customers.service;
 
-import com.customer.customers.model.dto.CustomerDto;
-import com.customer.customers.model.request.LoginRequest;
+import com.customer.customers.model.dto.ResponseDto;
+import com.customer.customers.model.entity.Customer;
 
 public interface WalletService {
 
-    CustomerDto increaseBalance(double price, LoginRequest request);
-    CustomerDto decreaseBalance(double price,LoginRequest request);
+    ResponseDto increaseBalance(double price, Customer customer);
+
+    ResponseDto decreaseBalance(double price, Customer customer);
+
+    boolean checkBalance(double offer, Customer customer);
 
 }

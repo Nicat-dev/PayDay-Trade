@@ -5,9 +5,12 @@ import com.customer.customers.exception.ResourceNotExistException;
 import com.customer.customers.exception.ResourceNotFoundException;
 import com.customer.customers.mapper.CustomerMapper;
 import com.customer.customers.model.dto.CustomerDto;
+import com.customer.customers.model.dto.ResponseDto;
 import com.customer.customers.model.entity.Customer;
+import com.customer.customers.model.request.DepositRequest;
 import com.customer.customers.model.request.RegisterRequest;
 import com.customer.customers.repository.CustomerRepository;
+import com.customer.customers.service.AuthControlService;
 import com.customer.customers.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -60,6 +63,11 @@ public class CustomerServiceImpl implements CustomerService {
     public void delete(Long id) {
         ifNotExist(id);
         repository.deleteById(id);
+    }
+
+    @Override
+    public ResponseDto depositMoney(DepositRequest request) {
+        return null;
     }
 
     private void ifExist(String username) {

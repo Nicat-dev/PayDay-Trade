@@ -26,7 +26,8 @@ public class ScheduledTaskService {
             Optional<Stock> product = stockRepository.findById(stock.getId());
 
             double randomPrice= ThreadLocalRandom.current().nextDouble(100,800);
-            product.orElseThrow(()-> new ApplicationException(Exceptions.STOCK_NOT_FOUND_EXCEPTION)).setPrice(randomPrice);
+            product.orElseThrow(()-> new ApplicationException(Exceptions.STOCK_NOT_FOUND_EXCEPTION))
+                    .setPrice(randomPrice);
 
             stockRepository.save(product.orElseThrow());
         }
