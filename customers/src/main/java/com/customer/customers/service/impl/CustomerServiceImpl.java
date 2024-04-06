@@ -10,6 +10,7 @@ import com.customer.customers.model.request.RegisterRequest;
 import com.customer.customers.repository.CustomerRepository;
 import com.customer.customers.service.CustomerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,12 +21,15 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository repository;
     private final CustomerMapper mapper;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
     public CustomerDto save(RegisterRequest request) {
         ifExist(request.username());
-        return mapper.entityToDto(repository.save(mapper.registerToEntity(request)));
+        Customer customer = mapper.registerToEntity(request);
+        customer.setPassword(passwordEncoder.encode(request.password()));
+        return mapper.entityToDto(repository.save(customer));
     }
 
     @Override
@@ -36,7 +40,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .name(request.name())
                 .surname(request.surname())
                 .email(request.email())
-                .password(request.password())
+                .password(passwordEncoder.encode(request.password()))
                 .build();
         return mapper.entityToDto(customer);
     }
