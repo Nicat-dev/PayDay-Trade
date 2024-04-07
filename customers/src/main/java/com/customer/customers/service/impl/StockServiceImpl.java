@@ -65,8 +65,46 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public ResponseDto sellStock(BuySellRequestDto requestDto) {
-        return null;
+    public ResponseDto sellStock(BuySellRequestDto buySellRequestDto) {
+
+        Optional<Customer> customer = customerRepository.findByUsernameOrEmail(buySellRequestDto.getUsername());
+        CustomerStock stock = repository.findCustomerStockBySymbol(buySellRequestDto.getSymbol());
+        if (stock == null){
+            throw new ApplicationException(Exceptions.STOCK_NOT_FOUND_EXCEPTION);
+        }
+
+        if (stock.isBuyStatus() && !stock.isSellStatus()){
+            SellRequestDto request = SellRequestDto.builder()
+                    .symbol(buySellRequestDto.getSymbol())
+                    .offerPrice(buySellRequestDto.getOffer())
+                    .build();
+            double price = client.sellStock(request);
+
+            if (price != 0){
+                if (walletService.checkBalance(buySellRequestDto.getOffer(),
+                        customer.orElseThrow(()-> new ApplicationException(Exceptions.USER_NOT_FOUND_EXCEPTION)))){
+                    stock.setSellStatus(true);
+                    stock.setSellRequest(false);
+                    stock.setSellPrice(price);
+                    repository.save(stock);
+                    walletService.increaseBalance(price,customer
+                            .orElseThrow(() -> new ApplicationException(Exceptions.USER_NOT_FOUND_EXCEPTION)));
+                    return new ResponseDto("Sell is successfully." +
+                            buySellRequestDto.getUsername() + " gain " + price +" dollar");
+                }else{
+                    throw new ApplicationException(Exceptions.WALLET_NOT_ENOUGH_EXCEPTION);
+                }
+            }else{
+                stock.setSellRequest(true);
+                stock.setSellPrice(buySellRequestDto.getOffer());
+                repository.save(stock);
+                return new ResponseDto("The stock price is higher than your bid("+request.getOfferPrice()+"). However, " +
+                        "we have tracked your stock(" + request.getSymbol() + "). If the stock's value falls below your bid, it will be taken automatically.");
+            }
+
+        }else{
+            throw new ApplicationException(Exceptions.STOCK_NOT_FOUND_EXCEPTION);
+        }
     }
 
 
