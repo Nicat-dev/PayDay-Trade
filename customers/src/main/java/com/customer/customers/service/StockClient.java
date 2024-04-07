@@ -1,7 +1,7 @@
 package com.customer.customers.service;
 
 import com.customer.customers.model.client.Stock;
-import com.customer.customers.model.request.SellRequest;
+import com.customer.customers.model.dto.SellRequestDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +18,6 @@ public interface StockClient {
     Stock findStockByName(@RequestParam("name") String name);
 
     @PostMapping("/sell")
-    double sellStock(@RequestBody SellRequest request);
+    double sellStock(@RequestBody SellRequestDto request);
 
 }

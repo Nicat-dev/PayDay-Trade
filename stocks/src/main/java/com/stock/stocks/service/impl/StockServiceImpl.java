@@ -43,8 +43,8 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public double sellStock(SellRequest request) {
-        double price = findStockBySymbol(request.symbol()).getPrice();
-        if (price >= request.offer()){
+        double price = findStockBySymbol(request.getSymbol()).getPrice();
+        if (price >= request.getOffer()){
             return price;
         }else {
             return 0;

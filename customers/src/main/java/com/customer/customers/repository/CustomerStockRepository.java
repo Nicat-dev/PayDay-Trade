@@ -5,5 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CustomerStockRepository extends JpaRepository<Long, CustomerStock> {
+public interface CustomerStockRepository extends JpaRepository<CustomerStock, Long> {
+
+    CustomerStock findCustomerStockBySymbol(String symbol);
+
 }

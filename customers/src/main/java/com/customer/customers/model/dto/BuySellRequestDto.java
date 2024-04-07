@@ -17,5 +17,5 @@ public class BuySellRequestDto {
     private String username;
 
     @Min(value = 0, message = "Money must be a positive value")
-    private int offer;
+    private double offer;
 }

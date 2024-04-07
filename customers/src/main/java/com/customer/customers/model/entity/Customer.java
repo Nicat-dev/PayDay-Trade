@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -28,5 +30,8 @@ public class Customer {
     String email;
     @Builder.Default
     double wallet = 0;
+
+    @OneToMany(mappedBy = "customer")
+    List<CustomerStock> customerStocks;
 
 }

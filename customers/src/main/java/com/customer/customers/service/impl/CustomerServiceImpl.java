@@ -10,7 +10,6 @@ import com.customer.customers.model.entity.Customer;
 import com.customer.customers.model.request.DepositRequest;
 import com.customer.customers.model.request.RegisterRequest;
 import com.customer.customers.repository.CustomerRepository;
-import com.customer.customers.service.AuthControlService;
 import com.customer.customers.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
