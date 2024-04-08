@@ -1,5 +1,6 @@
 package com.customer.customers.service.impl;
 
+import com.customer.customers.exception.ApplicationException;
 import com.customer.customers.exception.ResourceExistsException;
 import com.customer.customers.exception.ResourceNotExistException;
 import com.customer.customers.exception.ResourceNotFoundException;
@@ -7,12 +8,14 @@ import com.customer.customers.mapper.CustomerMapper;
 import com.customer.customers.model.dto.CustomerDto;
 import com.customer.customers.model.dto.ResponseDto;
 import com.customer.customers.model.entity.Customer;
+import com.customer.customers.model.enums.Exceptions;
 import com.customer.customers.model.request.DepositRequest;
 import com.customer.customers.model.request.RegisterRequest;
 import com.customer.customers.repository.CustomerRepository;
+import com.customer.customers.service.AuthControlService;
 import com.customer.customers.service.CustomerService;
+import com.customer.customers.service.WalletService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,14 +26,15 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository repository;
     private final CustomerMapper mapper;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthControlService authControlService;
+    private final WalletService walletService;
 
 
     @Override
     public CustomerDto save(RegisterRequest request) {
         ifExist(request.username());
         Customer customer = mapper.registerToEntity(request);
-        customer.setPassword(passwordEncoder.encode(request.password()));
+        customer.setPassword(authControlService.encode(request.password()));
         return mapper.entityToDto(repository.save(customer));
     }
 
@@ -42,7 +46,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .name(request.name())
                 .surname(request.surname())
                 .email(request.email())
-                .password(passwordEncoder.encode(request.password()))
+                .password(authControlService.encode(request.password()))
                 .build();
         return mapper.entityToDto(customer);
     }
@@ -51,6 +55,11 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerDto findById(Long id) {
         return mapper.entityToDto(repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer", "id", id)));
+    }
+
+    @Override
+    public CustomerDto findByUsername(String username) {
+        return mapper.entityToDto(getByUsername(username));
     }
 
     @Override
@@ -66,7 +75,12 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public ResponseDto depositMoney(DepositRequest request) {
-        return null;
+        if (authControlService.authControlService(request.username(), request.password())){
+            walletService.increaseBalance(request.money(), getByUsername(request.username()));
+            return new ResponseDto(request.money() + " was added to " + request.username() + " balance");
+        }else{
+            throw new ApplicationException(Exceptions.PASSWORD_DOESNT_MATCH);
+        }
     }
 
     private void ifExist(String username) {
@@ -79,6 +93,11 @@ public class CustomerServiceImpl implements CustomerService {
         if (!repository.existsById(id)) {
             throw new ResourceNotExistException("Customer", "id", id);
         }
+    }
+
+    private Customer getByUsername(String username){
+        return repository.findByUsername(username)
+                .orElseThrow(()->new ApplicationException(Exceptions.USER_NOT_FOUND_EXCEPTION));
     }
 
 }

@@ -1,7 +1,6 @@
 package com.customer.customers.service.impl;
 
 import com.customer.customers.constant.Constants;
-import com.customer.customers.model.dto.CustomerDto;
 import com.customer.customers.model.dto.ResponseDto;
 import com.customer.customers.model.entity.Customer;
 import com.customer.customers.repository.CustomerRepository;

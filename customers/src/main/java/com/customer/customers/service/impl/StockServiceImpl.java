@@ -32,7 +32,7 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public ResponseDto buyStock(BuySellRequestDto requestDto) {
-        Optional<Customer> customer = customerRepository.findByUsernameOrEmail(requestDto.getUsername());
+        Optional<Customer> customer = customerRepository.findByUsername(requestDto.getUsername());
         CustomerStock customerStockBySymbol = repository
                 .findCustomerStockBySymbol(requestDto.getSymbol());
 
@@ -67,7 +67,7 @@ public class StockServiceImpl implements StockService {
     @Override
     public ResponseDto sellStock(BuySellRequestDto buySellRequestDto) {
 
-        Optional<Customer> customer = customerRepository.findByUsernameOrEmail(buySellRequestDto.getUsername());
+        Optional<Customer> customer = customerRepository.findByUsername(buySellRequestDto.getUsername());
         CustomerStock stock = repository.findCustomerStockBySymbol(buySellRequestDto.getSymbol());
         if (stock == null){
             throw new ApplicationException(Exceptions.STOCK_NOT_FOUND_EXCEPTION);
@@ -130,6 +130,7 @@ public class StockServiceImpl implements StockService {
                                               double offer, boolean buyStatus) {
         customerStock.setBuyStatus(buyStatus);
         customerStock.setBuyPrice(offer);
+        customerStock.setCustomer(customer.orElseThrow());
         repository.save(customerStock);
         return customerStock;
     }

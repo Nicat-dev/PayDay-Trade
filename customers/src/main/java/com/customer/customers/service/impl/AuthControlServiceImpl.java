@@ -10,8 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class
-AuthControlServiceImpl implements AuthControlService {
+public class AuthControlServiceImpl implements AuthControlService {
 
     private final CustomerRepository repository;
     private final PasswordEncoder encoder;
@@ -19,7 +18,8 @@ AuthControlServiceImpl implements AuthControlService {
     @Override
     public boolean authControlService(String username, String password) {
         if (repository.existsByUsername(username)){
-            if (encoder.matches(repository.findByUsername(username).getPassword(),password)){
+            if (encoder.matches(repository.findByUsername(username)
+                    .orElseThrow(()->new ApplicationException(Exceptions.USER_NOT_FOUND_EXCEPTION)).getPassword(),password)){
                 return true;
             }else{
                 throw new ApplicationException(Exceptions.PASSWORD_DOESNT_MATCH);
@@ -27,5 +27,10 @@ AuthControlServiceImpl implements AuthControlService {
         }else {
             throw new ApplicationException(Exceptions.USER_NOT_FOUND_EXCEPTION);
         }
+    }
+
+    @Override
+    public String encode(String password) {
+        return encoder.encode(password);
     }
 }
